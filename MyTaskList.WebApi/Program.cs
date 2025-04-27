@@ -1,11 +1,15 @@
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MyTaskList.Application.Abstractions.Ports.Driven;
 using MyTaskList.Application.Abstractions.Ports.Driver;
+using MyTaskList.Application.Entities;
 using MyTaskList.Application.Services;
 using MyTaskList.Persistence;
 using MyTaskList.Persistence.Repositories;
 using MyTaskList.WebApi.Options;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,35 +36,26 @@ builder.Services.AddDbContext<MyTaskListDbContext>((services, options) =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.MapOpenApi();
+app.MapScalarApiReference("/swagger", x =>
 {
-    app.MapOpenApi();
-}
+    x.WithDarkMode(false);
+    x.WithTheme(ScalarTheme.Alternate);
+});
 
-app.UseHttpsRedirection();
-
-var summaries = new[]
+var v1 = app.MapGroup("/v1");
+var itemsRoute = v1.MapGroup("/items");
+itemsRoute.MapGet("/", async Task<List<Item>> (IItemService service, CancellationToken cancellationToken) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
+    var items = await service.GetAllAsync(cancellationToken);
+    return items;
+});
+itemsRoute.MapGet("/{id}", async Task<Results<Ok<Item>, NotFound>> (Guid id, IItemService service, CancellationToken cancellationToken) =>
+{
+    var item = await service.GetByIdAsync(id, cancellationToken);
+    if (item is null)
     {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast");
-
-app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+        return TypedResults.NotFound();
+    }
+    return TypedResults.Ok(item);
+});
