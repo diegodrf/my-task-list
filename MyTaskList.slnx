@@ -7,4 +7,10 @@
   <Project Path="MyTaskList.Application/MyTaskList.Application.csproj" />
   <Project Path="MyTaskList.Persistence/MyTaskList.Persistence.csproj" />
   <Project Path="MyTaskList.Tests/MyTaskList.Tests.csproj" />
+  <Project Path="MyTaskList.WebApi\MyTaskList.WebApi.csproj" Type="Classic C#">
+    <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />
+    <Configuration Solution="Debug|x86" Project="Debug|Any CPU" />
+    <Configuration Solution="Release|x64" Project="Release|Any CPU" />
+    <Configuration Solution="Release|x86" Project="Release|Any CPU" />
+  </Project>
 </Solution>

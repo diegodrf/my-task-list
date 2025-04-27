@@ -19,5 +19,15 @@ public class ItemConfiguration : IEntityTypeConfiguration<Item>
         builder.Property(x => x.Done)
             .IsRequired()
             .HasDefaultValue(false);
+
+        builder.HasData([
+            new Item
+            {
+                Id = new Guid("8643806F-5759-48CB-9CE6-7802CB346B33"),
+                Name = "Sample",
+                CreatedAt = new DateTime(2025, 4, 27, 2, 44,0, DateTimeKind.Utc),
+                Done = false
+            }
+        ]);
     }
 }
