@@ -1,0 +1,10 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="MyTaskList.Application/MyTaskList.Application.csproj" />
+  <Project Path="MyTaskList.Persistence/MyTaskList.Persistence.csproj" />
+  <Project Path="MyTaskList.Tests/MyTaskList.Tests.csproj" />
+</Solution>
