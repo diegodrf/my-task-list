@@ -59,3 +59,5 @@ itemsRoute.MapGet("/{id}", async Task<Results<Ok<Item>, NotFound>> (Guid id, IIt
     }
     return TypedResults.Ok(item);
 });
+
+app.Run();
